@@ -3,15 +3,15 @@ import type { GameResult } from '../types/chess';
 
 export function buildPgn(chess: Chess, result: GameResult, humanColor: 'white' | 'black'): string {
   const playerName = 'Human';
-  const aiName = 'Stockfish';
+  const aiName = 'AI';
   const white = humanColor === 'white' ? playerName : aiName;
   const black = humanColor === 'black' ? playerName : aiName;
 
   const resultStr = result.winner === 'white'
     ? '1-0'
     : result.winner === 'black'
-    ? '0-1'
-    : '1/2-1/2';
+      ? '0-1'
+      : '1/2-1/2';
 
   const pgn = chess.pgn({
     maxWidth: 72,

@@ -4,13 +4,13 @@ import type { Square } from 'chess.js';
 import type { DifficultyLevel, PlayerColor, GameResult, GameStatus } from '../types/chess';
 import { audioService } from '../services/audioService';
 import { getGameResult, getTimeoutResult } from '../utils/gameResult';
+import { AI_MOVE_DELAY_MS } from '../constants/game';
 
 interface UseGameProps {
   getBestMove: (fen: string, difficulty: DifficultyLevel, moves: string[]) => Promise<string>;
   stockfishReady: boolean;
   difficulty: DifficultyLevel;
   onGameEnd: (result: GameResult, humanColor: PlayerColor) => void;
-  onMoveComplete: (color: PlayerColor) => void;
 }
 
 export function useGame({
@@ -18,7 +18,6 @@ export function useGame({
   stockfishReady,
   difficulty,
   onGameEnd,
-  onMoveComplete,
 }: UseGameProps) {
   const chessRef = useRef<Chess>(new Chess());
   const [fen, setFen] = useState<string>(new Chess().fen());
@@ -76,12 +75,20 @@ export function useGame({
 
     try {
       const chess = chessRef.current;
+      const startTime = Date.now();
       const move = await getBestMove(chess.fen(), difficulty, uciMovesRef.current);
 
       // Check game hasn't been reset while thinking
       if (chessRef.current !== chess && !chess.fen().includes(chessRef.current.fen().substring(0, 20))) {
         isAiThinkingRef.current = false;
         return;
+      }
+
+      // Artificial delay so the move doesn't feel instant
+      const elapsed = Date.now() - startTime;
+      const remaining = AI_MOVE_DELAY_MS - elapsed;
+      if (remaining > 0) {
+        await new Promise(resolve => setTimeout(resolve, remaining));
       }
 
       const result = chess.move(move);
@@ -104,16 +111,13 @@ export function useGame({
       const gameRes = getGameResult(chess);
       if (gameRes) {
         endGame(gameRes, currentHumanColor);
-      } else {
-        // Back to human turn
-        onMoveComplete(currentHumanColor);
       }
     } catch (err) {
       console.error('AI move error:', err);
     } finally {
       isAiThinkingRef.current = false;
     }
-  }, [getBestMove, difficulty, stockfishReady, syncFen, endGame, onMoveComplete]);
+  }, [getBestMove, difficulty, stockfishReady, syncFen, endGame]);
 
   const onPieceDrop = useCallback((sourceSquare: Square, targetSquare: Square, piece: string): boolean => {
     const chess = chessRef.current;
@@ -158,13 +162,11 @@ export function useGame({
       return true;
     }
 
-    onMoveComplete(humanColor === 'white' ? 'black' : 'white');
-
-    // Trigger AI move after a short delay for visual feedback
-    setTimeout(() => requestAiMove(humanColor), 100);
+    // Trigger AI move
+    requestAiMove(humanColor);
 
     return true;
-  }, [gameStatus, humanColor, syncFen, endGame, onMoveComplete, requestAiMove]);
+  }, [gameStatus, humanColor, syncFen, endGame, requestAiMove]);
 
   const onSquareClick = useCallback((square: Square) => {
     const chess = chessRef.current;
@@ -213,10 +215,8 @@ export function useGame({
     // If AI is white, trigger AI move first
     if (newHuman === 'black') {
       setTimeout(() => requestAiMove(newHuman), 200);
-    } else {
-      onMoveComplete(newHuman);
     }
-  }, [requestAiMove, onMoveComplete]);
+  }, [requestAiMove]);
 
   const handleTimeout = useCallback((loser: PlayerColor) => {
     if (gameStatus !== 'playing') return;

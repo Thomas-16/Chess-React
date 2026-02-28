@@ -7,7 +7,6 @@ import { ControlPanel } from './components/menu/ControlPanel';
 import { ChatPanel } from './components/chat/ChatPanel';
 import { useGame } from './hooks/useGame';
 import { useStockfish } from './hooks/useStockfish';
-import { useTimer } from './hooks/useTimer';
 import { useAudio } from './hooks/useAudio';
 import { useSignalR } from './hooks/useSignalR';
 import { useChat } from './hooks/useChat';
@@ -43,18 +42,7 @@ export default function App() {
     onGameSaved: useCallback((id: string) => console.log('Game saved:', id), []),
   });
 
-  // Timer: uses a ref for timeout callback to avoid stale closures
-  const handleTimeoutRef = useRef<(loser: PlayerColor) => void>(() => {});
-  const timer = useTimer(useCallback((loser: PlayerColor) => {
-    handleTimeoutRef.current(loser);
-  }, []));
-
-  const onMoveComplete = useCallback((nextTurn: PlayerColor) => {
-    timer.switchTurn(nextTurn);
-  }, [timer]);
-
   const onGameEnd = useCallback(async (result: GameResult, humanColor: PlayerColor) => {
-    timer.stopTimer();
     chat.setPlaying(false);
 
     // Auto-chat
@@ -70,32 +58,25 @@ export default function App() {
       const resultStr = getResultString(result);
       await signalRService.saveGameResult(gameIdRef.current, pgn, resultStr);
     }
-  }, [timer, chat]);
+  }, [chat]);
 
   const game = useGame({
     getBestMove,
     stockfishReady,
     difficulty,
     onGameEnd,
-    onMoveComplete,
   });
 
   // Keep refs in sync with game state
   chessGetterRef.current = game.getChess;
   humanColorRef.current = game.humanColor;
-  handleTimeoutRef.current = game.handleTimeout;
 
   const handleNewGame = useCallback(async () => {
-    timer.resetTimer();
     chat.clearMessages();
     game.startNewGame();
 
     // Defer until after startNewGame updates humanColor state
     setTimeout(async () => {
-      const hColor = humanColorRef.current;
-      // Start timer for whoever moves first (human if white, else wait for AI to move first)
-      timer.startTimer(hColor === 'white' ? 'white' : 'black');
-
       if (connected) {
         const gid = await signalRService.startNewGame();
         if (gid) {
@@ -105,20 +86,17 @@ export default function App() {
         }
       }
     }, 100);
-  }, [timer, chat, game, connected]);
+  }, [chat, game, connected]);
 
   // Board layout helpers
   const { humanColor, gameStatus, gameResult, fen, onPieceDrop, onSquareClick, customSquareStyles } = game;
-  const aiLabel = `Stockfish (${difficulty})`;
+  const aiLabel = `AI (${difficulty})`;
   const topName = humanColor === 'white' ? aiLabel : 'You';
   const bottomName = humanColor === 'white' ? 'You' : aiLabel;
-  const topColor: PlayerColor = humanColor === 'white' ? 'black' : 'white';
-  const topMs = topColor === 'white' ? timer.whiteMs : timer.blackMs;
-  const bottomMs = humanColor === 'white' ? timer.whiteMs : timer.blackMs;
 
   const boardElement = (
     <div className="relative flex flex-col" style={{ width: 560 }}>
-      <PlayerBar name={topName} timeMs={topMs} isActive={timer.activeColor === topColor} isTop />
+      <PlayerBar name={topName} isTop />
       <div className="relative">
         <ChessBoard
           fen={fen}
@@ -132,7 +110,7 @@ export default function App() {
           <GameResultOverlay result={gameResult} onNewGame={handleNewGame} />
         )}
       </div>
-      <PlayerBar name={bottomName} timeMs={bottomMs} isActive={timer.activeColor === humanColor} />
+      <PlayerBar name={bottomName} />
     </div>
   );
 

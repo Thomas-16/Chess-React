@@ -17,12 +17,8 @@ export const DIFFICULTY_CONFIGS: Record<DifficultyLevel, DifficultyConfig> = {
   Expert: { skill: 20, depth: 20, moveTime: 2000 },
 };
 
-// Chess clock: 10 minutes with 5s increment
-export const GAME_DURATION_MS = 10 * 60 * 1000;
-export const INCREMENT_MS = 5000;
-
-// Timer tick interval
-export const TIMER_TICK_MS = 100;
+// Minimum delay before AI plays its move (ms) — so it doesn't feel instant
+export const AI_MOVE_DELAY_MS = 400;
 
 // Typing animation speed (ms per character)
 export const TYPING_SPEED_MS = 30;
