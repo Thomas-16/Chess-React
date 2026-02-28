@@ -24,26 +24,36 @@ export function ControlPanel({
   isPlaying,
 }: ControlPanelProps) {
   return (
-    <div className="flex flex-col gap-4 p-4 bg-gray-800 rounded-xl h-full">
-      {/* Title */}
-      <div className="text-center">
-        <h1 className="text-xl font-bold text-white">Chess</h1>
-        <p className="text-gray-400 text-xs mt-1">Human vs AI</p>
-      </div>
-
-      {/* Status indicators */}
-      <div className="flex flex-col gap-1.5 text-xs">
+    <div
+      className="flex flex-col gap-5 p-4 rounded-xl"
+      style={{
+        backgroundColor: '#13161d',
+        border: '1px solid rgba(255,255,255,0.05)',
+      }}
+    >
+      {/* Status */}
+      <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${stockfishReady ? 'bg-green-400' : 'bg-yellow-400 animate-pulse'}`} />
-          <span className="text-gray-300">{stockfishReady ? 'Engine ready' : 'Loading engine...'}</span>
+          <div
+            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+            style={{ backgroundColor: stockfishReady ? '#3fb950' : '#d29922' }}
+          />
+          <span className="text-xs" style={{ color: '#5c6370' }}>
+            {stockfishReady ? 'Engine ready' : 'Loading engine'}
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-400' : 'bg-red-400 animate-pulse'}`} />
-          <span className="text-gray-300">{connected ? 'Backend connected' : 'Connecting...'}</span>
+          <div
+            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+            style={{ backgroundColor: connected ? '#3fb950' : '#f85149' }}
+          />
+          <span className="text-xs" style={{ color: '#5c6370' }}>
+            {connected ? 'Connected' : 'Offline'}
+          </span>
         </div>
       </div>
 
-      <hr className="border-gray-700" />
+      <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)' }} />
 
       {/* Difficulty */}
       <DifficultySelector
@@ -56,22 +66,33 @@ export function ControlPanel({
       <button
         onClick={onNewGame}
         disabled={!stockfishReady}
-        className="w-full py-2.5 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+        className="w-full py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+        style={{
+          backgroundColor: 'rgba(212,168,67,0.1)',
+          border: '1px solid rgba(212,168,67,0.22)',
+          color: '#d4a843',
+        }}
+        onMouseEnter={e => {
+          if (!e.currentTarget.disabled) {
+            e.currentTarget.style.backgroundColor = 'rgba(212,168,67,0.18)';
+          }
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.backgroundColor = 'rgba(212,168,67,0.1)';
+        }}
       >
-        New Game
+        {isPlaying ? 'Resign & New Game' : 'New Game'}
       </button>
 
-      <hr className="border-gray-700" />
+      <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)' }} />
 
       {/* Sound toggle */}
       <button
         onClick={onToggleSound}
-        className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${soundEnabled
-            ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-            : 'bg-gray-700 text-gray-500 hover:bg-gray-600'
-          }`}
+        className="w-full py-1.5 rounded text-xs transition-all text-left"
+        style={{ color: soundEnabled ? '#5c6370' : '#3a3f4a' }}
       >
-        {soundEnabled ? 'Sound: On' : 'Sound: Off'}
+        {soundEnabled ? '♪ Sound on' : '♪ Sound off'}
       </button>
     </div>
   );

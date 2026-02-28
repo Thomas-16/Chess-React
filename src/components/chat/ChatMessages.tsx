@@ -15,22 +15,22 @@ export function ChatMessages({ messages, isWaiting }: ChatMessagesProps) {
   }, [messages, isWaiting]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-3 space-y-1">
+    <div className="flex-1 overflow-y-auto px-4 py-3">
       {messages.length === 0 && (
-        <p className="text-gray-500 text-sm text-center mt-8">
-          Start a new game and chat with the AI!
+        <p className="text-xs text-center mt-10" style={{ color: '#3a3f4a' }}>
+          Ask the AI about the position
         </p>
       )}
       {messages.map(msg => (
         <ChatBubble key={msg.id} message={msg} />
       ))}
       {isWaiting && (
-        <div className="flex justify-start mb-2">
-          <div className="bg-gray-600 text-gray-100 px-3 py-2 rounded-2xl rounded-bl-sm text-sm">
-            <span className="inline-flex gap-1">
-              <span className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        <div className="flex justify-start mb-3">
+          <div className="pl-3" style={{ borderLeft: '2px solid rgba(212,168,67,0.25)' }}>
+            <span className="inline-flex gap-1 items-center">
+              <span className="w-1 h-1 rounded-full animate-bounce" style={{ backgroundColor: '#d4a843', animationDelay: '0ms' }} />
+              <span className="w-1 h-1 rounded-full animate-bounce" style={{ backgroundColor: '#d4a843', animationDelay: '150ms' }} />
+              <span className="w-1 h-1 rounded-full animate-bounce" style={{ backgroundColor: '#d4a843', animationDelay: '300ms' }} />
             </span>
           </div>
         </div>

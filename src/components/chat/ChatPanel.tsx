@@ -16,18 +16,26 @@ export function ChatPanel({ messages, isWaiting, onSend, hasGame, connected }: C
     <div
       className="flex flex-col h-full rounded-xl overflow-hidden"
       style={{
-        width: '450px',
-        backgroundColor: 'rgba(20, 22, 30, 0.92)',
-        backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        backgroundColor: '#13161d',
+        border: '1px solid rgba(255,255,255,0.05)',
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700/50">
-        <h2 className="text-white font-semibold text-sm">AI Commentary</h2>
+      <div
+        className="flex items-center justify-between px-4 py-3"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+      >
+        <span className="text-xs uppercase tracking-widest font-medium" style={{ color: '#4a5568' }}>
+          Chat With AI
+        </span>
         <div className="flex items-center gap-1.5">
-          <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-400' : 'bg-red-400 animate-pulse'}`} />
-          <span className="text-xs text-gray-400">{connected ? 'Online' : 'Offline'}</span>
+          <div
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ backgroundColor: connected ? '#3fb950' : '#f85149' }}
+          />
+          <span className="text-xs" style={{ color: '#3a3f4a' }}>
+            {connected ? 'live' : 'offline'}
+          </span>
         </div>
       </div>
 

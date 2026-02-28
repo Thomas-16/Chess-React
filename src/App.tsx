@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { GameLayout } from './components/layout/GameLayout';
 import { ChessBoard } from './components/board/ChessBoard';
 import { PlayerBar } from './components/board/PlayerBar';
@@ -71,22 +71,45 @@ export default function App() {
   chessGetterRef.current = game.getChess;
   humanColorRef.current = game.humanColor;
 
-  const handleNewGame = useCallback(async () => {
+  const needsGameId = useRef(false);
+
+  const acquireGameId = useCallback(async () => {
+    const gid = await signalRService.startNewGame();
+    if (gid) {
+      gameIdRef.current = gid;
+      chat.setGameId(gid);
+      chat.setPlaying(true);
+      needsGameId.current = false;
+    }
+  }, [chat]);
+
+  const handleNewGame = useCallback(() => {
     chat.clearMessages();
+    gameIdRef.current = null;
+    needsGameId.current = true;
     game.startNewGame();
 
-    // Defer until after startNewGame updates humanColor state
-    setTimeout(async () => {
-      if (connected) {
-        const gid = await signalRService.startNewGame();
-        if (gid) {
-          gameIdRef.current = gid;
-          chat.setGameId(gid);
-          chat.setPlaying(true);
-        }
-      }
-    }, 100);
-  }, [chat, game, connected]);
+    if (connected) {
+      acquireGameId();
+    }
+    // If not connected yet, the effect below will call acquireGameId when connected
+  }, [chat, game, connected, acquireGameId]);
+
+  // Acquire gameId when connection becomes available (covers the auto-start race condition)
+  useEffect(() => {
+    if (connected && needsGameId.current) {
+      acquireGameId();
+    }
+  }, [connected, acquireGameId]);
+
+  // Auto-start a game once Stockfish is ready
+  const hasAutoStarted = useRef(false);
+  useEffect(() => {
+    if (stockfishReady && !hasAutoStarted.current) {
+      hasAutoStarted.current = true;
+      handleNewGame();
+    }
+  }, [stockfishReady, handleNewGame]);
 
   // Board layout helpers
   const { humanColor, gameStatus, gameResult, fen, onPieceDrop, onSquareClick, customSquareStyles } = game;

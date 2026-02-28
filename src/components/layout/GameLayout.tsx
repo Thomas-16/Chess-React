@@ -8,20 +8,15 @@ interface GameLayoutProps {
 
 export function GameLayout({ menu, board, chat }: GameLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <div className="flex items-start gap-4 w-full max-w-7xl">
-        {/* Left: Control panel */}
-        <div className="flex-shrink-0 w-48">
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: '#0d1117' }}>
+      <div className="flex items-start gap-5">
+        <div className="flex-shrink-0" style={{ width: 192 }}>
           {menu}
         </div>
-
-        {/* Center: Board */}
         <div className="flex-shrink-0">
           {board}
         </div>
-
-        {/* Right: Chat */}
-        <div className="flex-shrink-0 self-stretch">
+        <div className="flex-shrink-0 self-stretch" style={{ width: 360 }}>
           {chat}
         </div>
       </div>

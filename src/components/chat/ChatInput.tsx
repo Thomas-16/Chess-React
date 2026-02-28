@@ -43,18 +43,27 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
   const isDisabled = disabled || !hasGame;
 
   return (
-    <div className="flex items-center gap-2 p-3 border-t border-gray-700">
+    <div
+      className="flex items-center gap-2 px-3 py-3"
+      style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+    >
       <input
         ref={inputRef}
         type="text"
         value={text}
         onChange={e => setText(e.target.value.slice(0, MAX_CHARS))}
         onKeyDown={handleKeyDown}
-        placeholder={hasGame ? 'Chat with AI...' : 'Start a game to chat'}
+        placeholder={hasGame ? 'Ask about the position...' : 'Start a game to chat'}
         disabled={isDisabled}
-        className="flex-1 bg-gray-700 text-white placeholder-gray-500 text-sm px-3 py-2 rounded-lg outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 min-w-0"
+        className="flex-1 text-sm px-3 py-2 rounded-lg outline-none min-w-0 transition-all"
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          color: '#cdd5e0',
+        }}
+        onFocus={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.3)'; }}
+        onBlur={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; }}
       />
-      <span className="text-gray-600 text-xs flex-shrink-0">{text.length}/{MAX_CHARS}</span>
       <VoiceButton
         isRecording={isRecording}
         volume={volume}
@@ -66,7 +75,18 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
       <button
         onClick={handleSend}
         disabled={isDisabled || !text.trim()}
-        className="flex-shrink-0 px-3 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+        className="flex-shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+        style={{
+          backgroundColor: 'rgba(212,168,67,0.1)',
+          border: '1px solid rgba(212,168,67,0.22)',
+          color: '#d4a843',
+        }}
+        onMouseEnter={e => {
+          if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = 'rgba(212,168,67,0.18)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.backgroundColor = 'rgba(212,168,67,0.1)';
+        }}
       >
         Send
       </button>
