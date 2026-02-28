@@ -58,7 +58,7 @@ export function ControlPanel({
         disabled={!stockfishReady}
         className="w-full py-2.5 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
       >
-        {isPlaying ? 'Resign & New Game' : 'New Game'}
+        New Game
       </button>
 
       <hr className="border-gray-700" />
@@ -66,11 +66,10 @@ export function ControlPanel({
       {/* Sound toggle */}
       <button
         onClick={onToggleSound}
-        className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${
-          soundEnabled
+        className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${soundEnabled
             ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
             : 'bg-gray-700 text-gray-500 hover:bg-gray-600'
-        }`}
+          }`}
       >
         {soundEnabled ? 'Sound: On' : 'Sound: Off'}
       </button>
