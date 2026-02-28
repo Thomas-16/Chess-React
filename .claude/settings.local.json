@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "E:\\Coding\\Chess-Backend",
+      "E:\\Coding\\ChessBot"
+    ]
+  }
+}
