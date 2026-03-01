@@ -111,7 +111,11 @@ export default function App() {
   }, [stockfishReady, handleNewGame]);
 
   // Board layout helpers
-  const { humanColor, gameStatus, gameResult, fen, onPieceDrop, onSquareClick, customSquareStyles } = game;
+  const {
+    humanColor, gameStatus, gameResult, fen,
+    onPieceDrop, onSquareClick, onPieceDragBegin, onPieceDragEnd, onRightClick,
+    onPromotionSelect, pendingPromotion, customSquareStyles,
+  } = game;
   const aiLabel = `AI (${difficulty})`;
   const topName = humanColor === 'white' ? aiLabel : 'You';
   const bottomName = humanColor === 'white' ? 'You' : aiLabel;
@@ -135,6 +139,11 @@ export default function App() {
             humanColor={humanColor}
             onPieceDrop={onPieceDrop}
             onSquareClick={onSquareClick}
+            onPieceDragBegin={onPieceDragBegin}
+            onPieceDragEnd={onPieceDragEnd}
+            onRightClick={onRightClick}
+            onPromotionSelect={onPromotionSelect}
+            pendingPromotion={pendingPromotion}
             customSquareStyles={customSquareStyles()}
             isInteractive={gameStatus === 'playing'}
           />

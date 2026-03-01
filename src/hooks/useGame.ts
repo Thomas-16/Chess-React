@@ -13,6 +13,13 @@ interface UseGameProps {
   onGameEnd: (result: GameResult, humanColor: PlayerColor) => void;
 }
 
+function isPawnPromotion(chess: Chess, from: Square, to: Square): boolean {
+  const piece = chess.get(from);
+  if (piece?.type !== 'p') return false;
+  const toRank = to[1];
+  return (piece.color === 'w' && toRank === '8') || (piece.color === 'b' && toRank === '1');
+}
+
 export function useGame({
   getBestMove,
   stockfishReady,
@@ -33,6 +40,7 @@ export function useGame({
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
   const [legalMoves, setLegalMoves] = useState<Square[]>([]);
   const [checkedKingSquare, setCheckedKingSquare] = useState<Square | null>(null);
+  const [pendingPromotion, setPendingPromotion] = useState<{ from: Square; to: Square } | null>(null);
 
   const getChess = useCallback(() => chessRef.current, []);
 
@@ -43,7 +51,6 @@ export function useGame({
     // Check highlight
     if (chess.isCheck()) {
       const turn = chess.turn();
-      // Find king square
       const board = chess.board();
       for (let r = 0; r < 8; r++) {
         for (let c = 0; c < 8; c++) {
@@ -66,6 +73,7 @@ export function useGame({
     setGameResult(result);
     setSelectedSquare(null);
     setLegalMoves([]);
+    setPendingPromotion(null);
     onGameEnd(result, color);
   }, [onGameEnd]);
 
@@ -78,13 +86,11 @@ export function useGame({
       const startTime = Date.now();
       const move = await getBestMove(chess.fen(), difficulty, uciMovesRef.current);
 
-      // Check game hasn't been reset while thinking
       if (chessRef.current !== chess && !chess.fen().includes(chessRef.current.fen().substring(0, 20))) {
         isAiThinkingRef.current = false;
         return;
       }
 
-      // Artificial delay so the move doesn't feel instant
       const elapsed = Date.now() - startTime;
       const remaining = AI_MOVE_DELAY_MS - elapsed;
       if (remaining > 0) {
@@ -119,41 +125,25 @@ export function useGame({
     }
   }, [getBestMove, difficulty, stockfishReady, syncFen, endGame]);
 
-  const onPieceDrop = useCallback((sourceSquare: Square, targetSquare: Square, piece: string): boolean => {
+  const executeHumanMove = useCallback((from: Square, to: Square, promotionPiece?: string): boolean => {
     const chess = chessRef.current;
-    if (gameStatus !== 'playing') return false;
-
-    const turn = chess.turn();
-    const isHumanTurn = (turn === 'w' && humanColor === 'white') || (turn === 'b' && humanColor === 'black');
-    if (!isHumanTurn || isAiThinkingRef.current) return false;
-
-    // Attempt promotion auto-queen
-    const moveObj: { from: Square; to: Square; promotion?: string } = {
-      from: sourceSquare,
-      to: targetSquare,
-    };
-
-    // Auto-promote to queen for pawns
-    if (piece.toLowerCase().includes('p')) {
-      const targetRank = targetSquare[1];
-      if (targetRank === '8' || targetRank === '1') {
-        moveObj.promotion = 'q';
-      }
-    }
+    const moveObj: { from: Square; to: Square; promotion?: string } = { from, to };
+    if (promotionPiece) moveObj.promotion = promotionPiece;
 
     const result = chess.move(moveObj);
     if (!result) return false;
 
-    const uciMove = sourceSquare + targetSquare + (result.promotion ?? '');
+    const uciMove = from + to + (result.promotion ?? '');
     uciMovesRef.current.push(uciMove);
 
     const isCapture = result.captured !== undefined;
     if (isCapture) audioService.playCapture();
     else audioService.playMove();
 
-    setLastMove({ from: sourceSquare, to: targetSquare });
+    setLastMove({ from, to });
     setSelectedSquare(null);
     setLegalMoves([]);
+    setPendingPromotion(null);
     syncFen();
 
     const gameRes = getGameResult(chess);
@@ -162,11 +152,50 @@ export function useGame({
       return true;
     }
 
-    // Trigger AI move
     requestAiMove(humanColor);
-
     return true;
-  }, [gameStatus, humanColor, syncFen, endGame, requestAiMove]);
+  }, [humanColor, syncFen, endGame, requestAiMove]);
+
+  const onPieceDrop = useCallback((sourceSquare: Square, targetSquare: Square, _piece: string): boolean => {
+    const chess = chessRef.current;
+    if (gameStatus !== 'playing') return false;
+
+    const turn = chess.turn();
+    const isHumanTurn = (turn === 'w' && humanColor === 'white') || (turn === 'b' && humanColor === 'black');
+    if (!isHumanTurn || isAiThinkingRef.current) return false;
+
+    // Validate it's a legal move at all before doing anything
+    const legal = chess.moves({ square: sourceSquare, verbose: true }).some(m => m.to === targetSquare);
+    if (!legal) return false;
+
+    // Show promotion dialog for pawn promotion
+    if (isPawnPromotion(chess, sourceSquare, targetSquare)) {
+      setPendingPromotion({ from: sourceSquare, to: targetSquare });
+      setSelectedSquare(sourceSquare);
+      const moves = chess.moves({ square: sourceSquare, verbose: true });
+      setLegalMoves(moves.map(m => m.to as Square));
+      return false; // Piece snaps back; dialog will appear
+    }
+
+    return executeHumanMove(sourceSquare, targetSquare);
+  }, [gameStatus, humanColor, executeHumanMove]);
+
+  // Called when user picks a promotion piece from the dialog
+  const onPromotionSelect = useCallback((
+    piece?: string,
+    fromSquare?: Square,
+    toSquare?: Square,
+  ): boolean => {
+    if (!piece || !fromSquare || !toSquare) {
+      setPendingPromotion(null);
+      setSelectedSquare(null);
+      setLegalMoves([]);
+      return false;
+    }
+    // piece is like 'wQ', 'bR' etc.
+    const promotionPiece = piece[1]?.toLowerCase();
+    return executeHumanMove(fromSquare, toSquare, promotionPiece);
+  }, [executeHumanMove]);
 
   const onSquareClick = useCallback((square: Square) => {
     const chess = chessRef.current;
@@ -178,13 +207,24 @@ export function useGame({
 
     const piece = chess.get(square);
 
-    // If a piece is selected and we click a legal target
-    if (selectedSquare && legalMoves.includes(square)) {
-      onPieceDrop(selectedSquare, square, chess.get(selectedSquare)?.type ?? '');
+    // Click the selected piece again → deselect
+    if (square === selectedSquare) {
+      setSelectedSquare(null);
+      setLegalMoves([]);
       return;
     }
 
-    // Select own piece
+    // Click a legal target square while a piece is selected
+    if (selectedSquare && legalMoves.includes(square)) {
+      if (isPawnPromotion(chess, selectedSquare, square)) {
+        setPendingPromotion({ from: selectedSquare, to: square });
+        return;
+      }
+      executeHumanMove(selectedSquare, square);
+      return;
+    }
+
+    // Select own piece (or switch selection to another piece)
     if (piece && ((piece.color === 'w' && humanColor === 'white') || (piece.color === 'b' && humanColor === 'black'))) {
       setSelectedSquare(square);
       const moves = chess.moves({ square, verbose: true });
@@ -193,7 +233,39 @@ export function useGame({
       setSelectedSquare(null);
       setLegalMoves([]);
     }
-  }, [gameStatus, humanColor, selectedSquare, legalMoves, onPieceDrop]);
+  }, [gameStatus, humanColor, selectedSquare, legalMoves, executeHumanMove]);
+
+  // Show legal moves when the user starts dragging a piece
+  const onPieceDragBegin = useCallback((_piece: string, sourceSquare: Square) => {
+    const chess = chessRef.current;
+    if (gameStatus !== 'playing') return;
+    const turn = chess.turn();
+    const isHumanTurn = (turn === 'w' && humanColor === 'white') || (turn === 'b' && humanColor === 'black');
+    if (!isHumanTurn || isAiThinkingRef.current) return;
+
+    setSelectedSquare(sourceSquare);
+    const moves = chess.moves({ square: sourceSquare, verbose: true });
+    setLegalMoves(moves.map(m => m.to as Square));
+  }, [gameStatus, humanColor]);
+
+  // Clear selection after drag ends (successful drop handled by onPieceDrop already)
+  const onPieceDragEnd = useCallback((_piece: string, _sq: Square) => {
+    // Don't clear if promotion dialog is showing
+    setPendingPromotion(prev => {
+      if (!prev) {
+        setSelectedSquare(null);
+        setLegalMoves([]);
+      }
+      return prev;
+    });
+  }, []);
+
+  // Right-click to cancel selection
+  const onRightClick = useCallback((_square: Square) => {
+    setSelectedSquare(null);
+    setLegalMoves([]);
+    setPendingPromotion(null);
+  }, []);
 
   const startNewGame = useCallback(() => {
     const newHuman: PlayerColor = humanWasWhiteLastRef.current ? 'black' : 'white';
@@ -210,9 +282,9 @@ export function useGame({
     setSelectedSquare(null);
     setLegalMoves([]);
     setCheckedKingSquare(null);
+    setPendingPromotion(null);
     setFen(new Chess().fen());
 
-    // If AI is white, trigger AI move first
     if (newHuman === 'black') {
       setTimeout(() => requestAiMove(newHuman), 200);
     }
@@ -224,36 +296,48 @@ export function useGame({
     endGame(result, humanColor);
   }, [gameStatus, humanColor, endGame]);
 
-  // Custom square styles for highlights
+  // Custom square styles
   const customSquareStyles = useCallback((): Record<string, React.CSSProperties> => {
     const styles: Record<string, React.CSSProperties> = {};
+    const chess = chessRef.current;
 
     if (lastMove) {
-      styles[lastMove.from] = { backgroundColor: 'rgba(255, 214, 10, 0.4)' };
-      styles[lastMove.to] = { backgroundColor: 'rgba(255, 214, 10, 0.4)' };
+      styles[lastMove.from] = { backgroundColor: 'rgba(255, 214, 10, 0.35)' };
+      styles[lastMove.to] = { backgroundColor: 'rgba(255, 214, 10, 0.35)' };
     }
 
     if (checkedKingSquare) {
-      styles[checkedKingSquare] = { backgroundColor: 'rgba(255, 30, 30, 0.6)' };
+      styles[checkedKingSquare] = { backgroundColor: 'rgba(220, 50, 50, 0.65)' };
     }
 
     if (selectedSquare) {
-      styles[selectedSquare] = { backgroundColor: 'rgba(100, 180, 255, 0.5)' };
+      styles[selectedSquare] = {
+        ...styles[selectedSquare],
+        backgroundColor: 'rgba(80, 160, 255, 0.5)',
+      };
     }
 
     for (const sq of legalMoves) {
       const existing = styles[sq];
-      if (existing) {
-        // Merge
+      const hasPiece = !!chess.get(sq);
+
+      if (hasPiece) {
+        // Capturable piece: ring overlay
         styles[sq] = {
           ...existing,
-          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.25) 28%, transparent 28%)',
-          backgroundSize: '100% 100%',
+          backgroundImage: [
+            existing?.backgroundImage,
+            'radial-gradient(circle, transparent 56%, rgba(0,0,0,0.22) 56%, rgba(0,0,0,0.22) 74%, transparent 74%)',
+          ].filter(Boolean).join(', '),
         };
       } else {
+        // Empty square: small dot
         styles[sq] = {
-          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.25) 28%, transparent 28%)',
-          backgroundSize: '100% 100%',
+          ...existing,
+          backgroundImage: [
+            existing?.backgroundImage,
+            'radial-gradient(circle, rgba(0,0,0,0.22) 28%, transparent 28%)',
+          ].filter(Boolean).join(', '),
         };
       }
     }
@@ -269,6 +353,11 @@ export function useGame({
     getChess,
     onPieceDrop,
     onSquareClick,
+    onPieceDragBegin,
+    onPieceDragEnd,
+    onRightClick,
+    onPromotionSelect,
+    pendingPromotion,
     startNewGame,
     handleTimeout,
     customSquareStyles,
