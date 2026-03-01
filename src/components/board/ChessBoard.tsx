@@ -27,14 +27,14 @@ export function ChessBoard({
       onPieceDrop={(from, to, piece) => onPieceDrop(from as Square, to as Square, piece)}
       onSquareClick={(square) => onSquareClick(square as Square)}
       customSquareStyles={customSquareStyles}
-      animationDuration={200}
+      animationDuration={180}
       arePiecesDraggable={isInteractive}
       customBoardStyle={{
-        borderRadius: '6px',
-        boxShadow: '0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(139,148,255,0.08)',
+        borderRadius: '2px',
+        boxShadow: '0 1px 12px rgba(0,0,0,0.1)',
       }}
-      customDarkSquareStyle={{ backgroundColor: '#7a4f3a' }}
-      customLightSquareStyle={{ backgroundColor: '#d4c5a9' }}
+      customDarkSquareStyle={{ backgroundColor: '#B58863' }}
+      customLightSquareStyle={{ backgroundColor: '#F0D9B5' }}
     />
   );
 }

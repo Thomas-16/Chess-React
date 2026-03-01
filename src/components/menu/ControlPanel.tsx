@@ -1,6 +1,6 @@
-
-import { DifficultySelector } from './DifficultySelector';
 import type { DifficultyLevel } from '../../types/chess';
+
+const DIFFICULTIES: DifficultyLevel[] = ['Easy', 'Medium', 'Hard', 'Expert'];
 
 interface ControlPanelProps {
   difficulty: DifficultyLevel;
@@ -25,82 +25,131 @@ export function ControlPanel({
 }: ControlPanelProps) {
   return (
     <div
-      className="flex flex-col gap-5 p-5 rounded-xl"
+      className="flex items-center"
       style={{
-        backgroundColor: '#0e1628',
-        border: '1px solid rgba(139,148,255,0.12)',
+        background: '#EEF4FB',
+        border: '1px solid #C8D8EB',
+        borderTop: 'none',
+        padding: '10px 16px',
+        gap: 16,
       }}
     >
-      {/* Logo */}
-      <div className="flex items-center gap-2">
-        <span style={{ fontSize: 22, color: '#818cf8' }}>♟</span>
-        <span className="text-sm font-semibold tracking-widest uppercase" style={{ color: '#818cf8' }}>Chess</span>
-      </div>
-
-      <div style={{ height: '1px', backgroundColor: 'rgba(139,148,255,0.08)' }} />
-
-      {/* Status */}
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-2">
+      {/* Status indicators */}
+      <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-1.5">
           <div
-            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-            style={{ backgroundColor: stockfishReady ? '#34d399' : '#fbbf24' }}
+            style={{
+              width: 5,
+              height: 5,
+              borderRadius: '50%',
+              backgroundColor: stockfishReady ? '#16A34A' : '#D97706',
+              flexShrink: 0,
+            }}
           />
-          <span className="text-xs" style={{ color: '#8892a4' }}>
-            {stockfishReady ? 'Engine ready' : 'Loading engine'}
+          <span style={{ fontSize: 12, color: '#5A7A96', whiteSpace: 'nowrap' }}>
+            {stockfishReady ? 'Engine ready' : 'Loading'}
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <div
-            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-            style={{ backgroundColor: connected ? '#34d399' : '#f87171' }}
+            style={{
+              width: 5,
+              height: 5,
+              borderRadius: '50%',
+              backgroundColor: connected ? '#16A34A' : '#DC2626',
+              flexShrink: 0,
+            }}
           />
-          <span className="text-xs" style={{ color: '#8892a4' }}>
-            {connected ? 'Connected' : 'Offline'}
+          <span style={{ fontSize: 12, color: '#5A7A96', whiteSpace: 'nowrap' }}>
+            {connected ? 'Online' : 'Offline'}
           </span>
         </div>
       </div>
 
-      <div style={{ height: '1px', backgroundColor: 'rgba(139,148,255,0.08)' }} />
+      {/* Divider */}
+      <div style={{ width: 1, height: 16, backgroundColor: '#C8D8EB', flexShrink: 0 }} />
 
-      {/* Difficulty */}
-      <DifficultySelector
-        selected={difficulty}
-        onChange={onDifficultyChange}
-        disabled={isPlaying}
-      />
+      {/* Difficulty pills */}
+      <div className="flex items-center gap-1 flex-shrink-0">
+        {DIFFICULTIES.map(d => (
+          <button
+            key={d}
+            onClick={() => onDifficultyChange(d)}
+            disabled={isPlaying}
+            style={{
+              fontSize: 12,
+              fontWeight: difficulty === d ? 500 : 400,
+              fontFamily: 'Outfit, sans-serif',
+              padding: '4px 10px',
+              border: difficulty === d ? '1px solid #232F3B' : '1px solid transparent',
+              backgroundColor: difficulty === d ? '#232F3B' : 'transparent',
+              color: difficulty === d ? '#FFFFFF' : '#5A7A96',
+              cursor: isPlaying ? 'not-allowed' : 'pointer',
+              opacity: isPlaying ? 0.5 : 1,
+              transition: 'all 0.1s ease',
+              borderRadius: 2,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {d}
+          </button>
+        ))}
+      </div>
+
+      {/* Spacer */}
+      <div style={{ flex: 1 }} />
 
       {/* New Game */}
       <button
         onClick={onNewGame}
         disabled={!stockfishReady}
-        className="w-full py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed"
         style={{
-          backgroundColor: 'rgba(129,140,248,0.12)',
-          border: '1px solid rgba(129,140,248,0.28)',
-          color: '#818cf8',
+          fontSize: 12,
+          fontWeight: 500,
+          fontFamily: 'Outfit, sans-serif',
+          padding: '5px 14px',
+          border: '1px solid #232F3B',
+          backgroundColor: 'transparent',
+          color: '#232F3B',
+          cursor: stockfishReady ? 'pointer' : 'not-allowed',
+          opacity: stockfishReady ? 1 : 0.3,
+          transition: 'all 0.12s ease',
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+          borderRadius: 2,
         }}
         onMouseEnter={e => {
           if (!e.currentTarget.disabled) {
-            e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.22)';
+            e.currentTarget.style.backgroundColor = '#232F3B';
+            e.currentTarget.style.color = '#FFFFFF';
           }
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.12)';
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.color = '#232F3B';
         }}
       >
-        {isPlaying ? 'Resign & New Game' : 'New Game'}
+        {isPlaying ? 'Resign & New' : 'New Game'}
       </button>
-
-      <div style={{ height: '1px', backgroundColor: 'rgba(139,148,255,0.08)' }} />
 
       {/* Sound toggle */}
       <button
         onClick={onToggleSound}
-        className="w-full py-1.5 rounded text-xs transition-all text-left"
-        style={{ color: soundEnabled ? '#8892a4' : '#3d4f6a' }}
+        style={{
+          fontSize: 14,
+          fontFamily: 'Outfit, sans-serif',
+          color: soundEnabled ? '#232F3B' : '#8BADC4',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+          flexShrink: 0,
+          transition: 'color 0.12s ease',
+          lineHeight: 1,
+        }}
+        title={soundEnabled ? 'Mute sounds' : 'Enable sounds'}
       >
-        {soundEnabled ? '♪ Sound on' : '♪ Sound off'}
+        {soundEnabled ? '♪' : '♩'}
       </button>
     </div>
   );

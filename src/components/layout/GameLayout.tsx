@@ -1,27 +1,21 @@
 import React from 'react';
 
 interface GameLayoutProps {
-  menu: React.ReactNode;
   board: React.ReactNode;
   chat: React.ReactNode;
 }
 
-export function GameLayout({ menu, board, chat }: GameLayoutProps) {
+export function GameLayout({ board, chat }: GameLayoutProps) {
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-8"
-      style={{
-        background: 'radial-gradient(ellipse at 50% 0%, rgba(129,140,248,0.06) 0%, #080c14 60%), #080c14',
-      }}
+      className="min-h-screen flex justify-center"
+      style={{ background: '#E4ECF5', padding: '36px 32px', alignItems: 'flex-start' }}
     >
-      <div className="flex items-start" style={{ gap: 24 }}>
-        <div className="flex-shrink-0" style={{ width: 260 }}>
-          {menu}
-        </div>
-        <div className="flex-shrink-0">
+      <div style={{ display: 'flex', gap: 20, alignItems: 'stretch' }}>
+        <div style={{ flexShrink: 0 }}>
           {board}
         </div>
-        <div className="flex-shrink-0 self-stretch" style={{ width: 440 }}>
+        <div style={{ width: 400, flexShrink: 0 }}>
           {chat}
         </div>
       </div>

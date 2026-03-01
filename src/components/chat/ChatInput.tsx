@@ -44,8 +44,12 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
 
   return (
     <div
-      className="flex items-center gap-2 px-3 py-3"
-      style={{ borderTop: '1px solid rgba(139,148,255,0.08)' }}
+      className="flex items-center gap-2"
+      style={{
+        padding: '12px 16px',
+        borderTop: '1px solid rgba(255,255,255,0.06)',
+        background: '#1C2730',
+      }}
     >
       <input
         ref={inputRef}
@@ -53,16 +57,25 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
         value={text}
         onChange={e => setText(e.target.value.slice(0, MAX_CHARS))}
         onKeyDown={handleKeyDown}
-        placeholder={hasGame ? 'Ask about the position...' : 'Start a game to chat'}
+        placeholder={hasGame ? 'Talk about the position...' : 'Start a game to chat'}
         disabled={isDisabled}
-        className="flex-1 text-sm px-3 py-2 rounded-lg outline-none min-w-0 transition-all"
         style={{
-          backgroundColor: 'rgba(139,148,255,0.05)',
-          border: '1px solid rgba(139,148,255,0.10)',
-          color: '#e2e8f0',
+          flex: 1,
+          fontFamily: 'Outfit, sans-serif',
+          fontSize: 13,
+          padding: '7px 10px',
+          backgroundColor: '#2C3D4A',
+          border: '1px solid rgba(255,255,255,0.07)',
+          color: '#CDDEE8',
+          outline: 'none',
+          minWidth: 0,
+          transition: 'border-color 0.15s ease',
+          opacity: isDisabled ? 0.4 : 1,
+          letterSpacing: '-0.01em',
+          borderRadius: 2,
         }}
-        onFocus={e => { e.currentTarget.style.borderColor = 'rgba(129,140,248,0.35)'; }}
-        onBlur={e => { e.currentTarget.style.borderColor = 'rgba(139,148,255,0.10)'; }}
+        onFocus={e => { e.currentTarget.style.borderColor = 'rgba(90,133,152,0.6)'; }}
+        onBlur={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; }}
       />
       <VoiceButton
         isRecording={isRecording}
@@ -75,17 +88,30 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
       <button
         onClick={handleSend}
         disabled={isDisabled || !text.trim()}
-        className="flex-shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed"
         style={{
-          backgroundColor: 'rgba(129,140,248,0.12)',
-          border: '1px solid rgba(129,140,248,0.28)',
-          color: '#818cf8',
+          fontFamily: 'Outfit, sans-serif',
+          fontSize: 12,
+          fontWeight: 500,
+          padding: '7px 14px',
+          border: '1px solid rgba(90,133,152,0.55)',
+          backgroundColor: 'transparent',
+          color: '#5A8598',
+          cursor: isDisabled || !text.trim() ? 'not-allowed' : 'pointer',
+          opacity: isDisabled || !text.trim() ? 0.3 : 1,
+          flexShrink: 0,
+          transition: 'all 0.12s ease',
+          letterSpacing: '-0.01em',
+          borderRadius: 2,
         }}
         onMouseEnter={e => {
-          if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.22)';
+          if (!e.currentTarget.disabled) {
+            e.currentTarget.style.backgroundColor = '#5A8598';
+            e.currentTarget.style.color = '#FFFFFF';
+          }
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.12)';
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.color = '#5A8598';
         }}
       >
         Send

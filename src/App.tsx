@@ -92,10 +92,9 @@ export default function App() {
     if (connected) {
       acquireGameId();
     }
-    // If not connected yet, the effect below will call acquireGameId when connected
   }, [chat, game, connected, acquireGameId]);
 
-  // Acquire gameId when connection becomes available (covers the auto-start race condition)
+  // Acquire gameId when connection becomes available
   useEffect(() => {
     if (connected && needsGameId.current) {
       acquireGameId();
@@ -118,39 +117,49 @@ export default function App() {
   const bottomName = humanColor === 'white' ? 'You' : aiLabel;
 
   const boardElement = (
-    <div className="relative flex flex-col" style={{ width: 680 }}>
-      <PlayerBar name={topName} isTop />
-      <div className="relative">
-        <ChessBoard
-          fen={fen}
-          humanColor={humanColor}
-          onPieceDrop={onPieceDrop}
-          onSquareClick={onSquareClick}
-          customSquareStyles={customSquareStyles()}
-          isInteractive={gameStatus === 'playing'}
-        />
-        {gameStatus === 'ended' && gameResult && (
-          <GameResultOverlay result={gameResult} onNewGame={handleNewGame} />
-        )}
+    <div style={{ width: 680 }}>
+      {/* Board card */}
+      <div
+        style={{
+          background: '#FFFFFF',
+          border: '1px solid #C8D8EB',
+          borderTop: '3px solid #232F3B',
+          padding: '16px',
+          boxShadow: '0 2px 12px rgba(28,46,66,0.1)',
+        }}
+      >
+        <PlayerBar name={topName} isTop />
+        <div className="relative">
+          <ChessBoard
+            fen={fen}
+            humanColor={humanColor}
+            onPieceDrop={onPieceDrop}
+            onSquareClick={onSquareClick}
+            customSquareStyles={customSquareStyles()}
+            isInteractive={gameStatus === 'playing'}
+          />
+          {gameStatus === 'ended' && gameResult && (
+            <GameResultOverlay result={gameResult} onNewGame={handleNewGame} />
+          )}
+        </div>
+        <PlayerBar name={bottomName} />
       </div>
-      <PlayerBar name={bottomName} />
+      {/* Controls bar below board */}
+      <ControlPanel
+        difficulty={difficulty}
+        onDifficultyChange={setDifficulty}
+        onNewGame={handleNewGame}
+        soundEnabled={soundEnabled}
+        onToggleSound={toggleSound}
+        connected={connected}
+        stockfishReady={stockfishReady}
+        isPlaying={gameStatus === 'playing'}
+      />
     </div>
   );
 
   return (
     <GameLayout
-      menu={
-        <ControlPanel
-          difficulty={difficulty}
-          onDifficultyChange={setDifficulty}
-          onNewGame={handleNewGame}
-          soundEnabled={soundEnabled}
-          onToggleSound={toggleSound}
-          connected={connected}
-          stockfishReady={stockfishReady}
-          isPlaying={gameStatus === 'playing'}
-        />
-      }
       board={boardElement}
       chat={
         <ChatPanel

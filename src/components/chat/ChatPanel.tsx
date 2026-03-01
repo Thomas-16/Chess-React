@@ -1,4 +1,3 @@
-
 import { ChatMessages } from './ChatMessages';
 import { ChatInput } from './ChatInput';
 import type { ChatMessage } from '../../types/chat';
@@ -14,29 +13,43 @@ interface ChatPanelProps {
 export function ChatPanel({ messages, isWaiting, onSend, hasGame, connected }: ChatPanelProps) {
   return (
     <div
-      className="flex flex-col h-full rounded-xl overflow-hidden"
+      className="flex flex-col h-full"
       style={{
-        backgroundColor: '#0e1628',
-        border: '1px solid rgba(139,148,255,0.12)',
+        background: '#232F3B',
+        border: '1px solid #1C2730',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
       }}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-5 py-3.5"
+        className="flex items-center justify-between"
         style={{
-          borderBottom: '1px solid rgba(139,148,255,0.08)',
-          background: 'linear-gradient(180deg, rgba(129,140,248,0.06) 0%, transparent 100%)',
+          padding: '14px 20px',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          background: '#1C2730',
         }}
       >
-        <span className="text-xs uppercase tracking-widest font-semibold" style={{ color: '#818cf8' }}>
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            color: '#5A8598',
+          }}
+        >
           Chat With AI
         </span>
         <div className="flex items-center gap-1.5">
           <div
-            className="w-1.5 h-1.5 rounded-full"
-            style={{ backgroundColor: connected ? '#34d399' : '#f87171' }}
+            style={{
+              width: 5,
+              height: 5,
+              borderRadius: '50%',
+              backgroundColor: connected ? '#22C55E' : '#EF4444',
+            }}
           />
-          <span className="text-xs" style={{ color: '#3d4f6a' }}>
+          <span style={{ fontSize: 11, color: '#3D5C6E' }}>
             {connected ? 'live' : 'offline'}
           </span>
         </div>

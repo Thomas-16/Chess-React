@@ -15,10 +15,18 @@ export function ChatMessages({ messages, isWaiting }: ChatMessagesProps) {
   }, [messages, isWaiting]);
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-3">
+    <div className="flex-1 overflow-y-auto" style={{ padding: '16px 20px', paddingRight: 16 }}>
       {messages.length === 0 && (
-        <p className="text-xs text-center mt-10" style={{ color: '#3d4f6a' }}>
-          Ask the AI about the position
+        <p
+          style={{
+            fontSize: 13,
+            color: '#3D5C6E',
+            marginTop: 20,
+            textAlign: 'center',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          Ask about the position
         </p>
       )}
       {messages.map(msg => (
@@ -26,13 +34,9 @@ export function ChatMessages({ messages, isWaiting }: ChatMessagesProps) {
       ))}
       {isWaiting && (
         <div className="flex justify-start mb-3">
-          <div className="pl-3" style={{ borderLeft: '2px solid rgba(129,140,248,0.3)' }}>
-            <span className="inline-flex gap-1 items-center">
-              <span className="w-1 h-1 rounded-full animate-bounce" style={{ backgroundColor: '#818cf8', animationDelay: '0ms' }} />
-              <span className="w-1 h-1 rounded-full animate-bounce" style={{ backgroundColor: '#818cf8', animationDelay: '150ms' }} />
-              <span className="w-1 h-1 rounded-full animate-bounce" style={{ backgroundColor: '#818cf8', animationDelay: '300ms' }} />
-            </span>
-          </div>
+          <span style={{ fontSize: 13, color: '#3D5C6E' }}>
+            Thinking<span className="animate-pulse">...</span>
+          </span>
         </div>
       )}
       <div ref={bottomRef} />

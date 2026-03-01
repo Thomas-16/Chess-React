@@ -1,4 +1,3 @@
-
 import type { GameResult } from '../../types/chess';
 
 interface GameResultOverlayProps {
@@ -10,34 +9,59 @@ export function GameResultOverlay({ result, onNewGame }: GameResultOverlayProps)
   return (
     <div
       className="absolute inset-0 flex flex-col items-center justify-center z-10"
-      style={{ backgroundColor: 'rgba(8,12,20,0.82)', backdropFilter: 'blur(4px)' }}
+      style={{ backgroundColor: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(4px)' }}
     >
       <div
-        className="flex flex-col items-center gap-5 px-8 py-6 rounded-2xl"
+        className="flex flex-col items-center gap-4 px-10 py-8"
         style={{
-          backgroundColor: '#0e1628',
-          border: '1px solid rgba(129,140,248,0.28)',
-          boxShadow: '0 0 40px rgba(129,140,248,0.12)',
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #C8D8EB',
+          borderTop: '3px solid #232F3B',
+          boxShadow: '0 4px 20px rgba(35,47,59,0.12)',
         }}
       >
         <div
-          className="text-2xl font-semibold tracking-wide"
-          style={{ color: '#818cf8' }}
+          style={{
+            fontSize: 26,
+            fontWeight: 600,
+            color: '#232F3B',
+            letterSpacing: '-0.02em',
+            textAlign: 'center',
+          }}
         >
           {result.displayText}
         </div>
+        {result.reason && (
+          <div style={{ fontSize: 13, color: '#7A9AB5', letterSpacing: '-0.01em' }}>
+            {result.reason}
+          </div>
+        )}
         <button
           onClick={onNewGame}
-          className="px-6 py-2 rounded-lg text-sm font-medium transition-all"
           style={{
-            backgroundColor: 'rgba(129,140,248,0.12)',
-            border: '1px solid rgba(129,140,248,0.28)',
-            color: '#818cf8',
+            fontSize: 13,
+            fontWeight: 500,
+            fontFamily: 'Outfit, sans-serif',
+            padding: '10px 28px',
+            border: '1px solid #232F3B',
+            backgroundColor: 'transparent',
+            color: '#232F3B',
+            cursor: 'pointer',
+            transition: 'all 0.12s ease',
+            marginTop: 4,
+            letterSpacing: '-0.01em',
+            borderRadius: 2,
           }}
-          onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.22)'; }}
-          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.12)'; }}
+          onMouseEnter={e => {
+            e.currentTarget.style.backgroundColor = '#232F3B';
+            e.currentTarget.style.color = '#FFFFFF';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = '#232F3B';
+          }}
         >
-          New Game
+          Play again
         </button>
       </div>
     </div>

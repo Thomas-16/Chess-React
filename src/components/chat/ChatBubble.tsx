@@ -1,4 +1,3 @@
-
 import type { ChatMessage } from '../../types/chat';
 
 interface ChatBubbleProps {
@@ -15,11 +14,16 @@ export function ChatBubble({ message }: ChatBubbleProps) {
     return (
       <div className="flex justify-end mb-3">
         <div
-          className="max-w-[85%] px-3 py-2 rounded-xl text-sm leading-relaxed"
           style={{
-            backgroundColor: 'rgba(129,140,248,0.12)',
-            border: '1px solid rgba(129,140,248,0.22)',
-            color: '#a5b4fc',
+            maxWidth: '82%',
+            padding: '8px 12px',
+            backgroundColor: '#2C3D4A',
+            border: '1px solid rgba(255,255,255,0.06)',
+            fontSize: 14,
+            lineHeight: 1.55,
+            color: '#CDDEE8',
+            letterSpacing: '-0.01em',
+            borderRadius: 2,
           }}
         >
           {displayText}
@@ -29,17 +33,21 @@ export function ChatBubble({ message }: ChatBubbleProps) {
   }
 
   return (
-    <div className="flex justify-start mb-3">
+    <div className="flex justify-start mb-4">
       <div
-        className="max-w-[90%] text-sm leading-relaxed pl-3"
         style={{
-          borderLeft: '2px solid rgba(129,140,248,0.3)',
-          color: '#8892a4',
+          maxWidth: '92%',
+          fontSize: 14,
+          lineHeight: 1.65,
+          color: '#7FA8BC',
+          borderLeft: '2px solid rgba(255,255,255,0.08)',
+          paddingLeft: 12,
+          letterSpacing: '-0.01em',
         }}
       >
         {displayText}
         {message.isTyping && (
-          <span className="inline-block ml-0.5 animate-pulse" style={{ color: '#818cf8' }}>▋</span>
+          <span className="inline-block ml-0.5 animate-pulse" style={{ color: '#5A8598' }}>▋</span>
         )}
       </div>
     </div>
