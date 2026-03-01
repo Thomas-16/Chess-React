@@ -11,10 +11,10 @@ export interface DifficultyConfig {
 }
 
 export const DIFFICULTY_CONFIGS: Record<DifficultyLevel, DifficultyConfig> = {
-  Easy:   { skill: 0,  depth: 3,  moveTime: 500 },
-  Medium: { skill: 5,  depth: 6,  moveTime: 1000 },
-  Hard:   { skill: 15, depth: 12, moveTime: 1500 },
-  Expert: { skill: 20, depth: 20, moveTime: 2000 },
+  Easy: { skill: 0, depth: 3, moveTime: 500 },
+  Medium: { skill: 4, depth: 5, moveTime: 1000 },
+  Hard: { skill: 13, depth: 10, moveTime: 1500 },
+  Expert: { skill: 18, depth: 20, moveTime: 2000 },
 };
 
 // Timer constants
@@ -23,7 +23,7 @@ export const INCREMENT_MS = 5 * 1000;            // 5 seconds per move
 export const TIMER_TICK_MS = 100;                // 100ms tick
 
 // Minimum delay before AI plays its move (ms) — so it doesn't feel instant
-export const AI_MOVE_DELAY_MS = 400;
+export const AI_MOVE_DELAY_MS = 600;
 
 // Typing animation speed (ms per character)
 export const TYPING_SPEED_MS = 30;
