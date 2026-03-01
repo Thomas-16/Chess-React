@@ -17,6 +17,11 @@ export const DIFFICULTY_CONFIGS: Record<DifficultyLevel, DifficultyConfig> = {
   Expert: { skill: 20, depth: 20, moveTime: 2000 },
 };
 
+// Timer constants
+export const GAME_DURATION_MS = 10 * 60 * 1000; // 10 minutes
+export const INCREMENT_MS = 5 * 1000;            // 5 seconds per move
+export const TIMER_TICK_MS = 100;                // 100ms tick
+
 // Minimum delay before AI plays its move (ms) — so it doesn't feel instant
 export const AI_MOVE_DELAY_MS = 400;
 

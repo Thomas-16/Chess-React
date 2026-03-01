@@ -118,7 +118,7 @@ export default function App() {
   const bottomName = humanColor === 'white' ? 'You' : aiLabel;
 
   const boardElement = (
-    <div className="relative flex flex-col" style={{ width: 560 }}>
+    <div className="relative flex flex-col" style={{ width: 680 }}>
       <PlayerBar name={topName} isTop />
       <div className="relative">
         <ChessBoard

@@ -17,9 +17,9 @@ export function ChatBubble({ message }: ChatBubbleProps) {
         <div
           className="max-w-[85%] px-3 py-2 rounded-xl text-sm leading-relaxed"
           style={{
-            backgroundColor: 'rgba(212,168,67,0.1)',
-            border: '1px solid rgba(212,168,67,0.2)',
-            color: '#c9a84c',
+            backgroundColor: 'rgba(129,140,248,0.12)',
+            border: '1px solid rgba(129,140,248,0.22)',
+            color: '#a5b4fc',
           }}
         >
           {displayText}
@@ -33,13 +33,13 @@ export function ChatBubble({ message }: ChatBubbleProps) {
       <div
         className="max-w-[90%] text-sm leading-relaxed pl-3"
         style={{
-          borderLeft: '2px solid rgba(212,168,67,0.25)',
-          color: '#a8b3c0',
+          borderLeft: '2px solid rgba(129,140,248,0.3)',
+          color: '#8892a4',
         }}
       >
         {displayText}
         {message.isTyping && (
-          <span className="inline-block ml-0.5 animate-pulse" style={{ color: '#d4a843' }}>▋</span>
+          <span className="inline-block ml-0.5 animate-pulse" style={{ color: '#818cf8' }}>▋</span>
         )}
       </div>
     </div>

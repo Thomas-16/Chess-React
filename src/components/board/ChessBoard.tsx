@@ -30,11 +30,11 @@ export function ChessBoard({
       animationDuration={200}
       arePiecesDraggable={isInteractive}
       customBoardStyle={{
-        borderRadius: '4px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+        borderRadius: '6px',
+        boxShadow: '0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(139,148,255,0.08)',
       }}
-      customDarkSquareStyle={{ backgroundColor: '#769656' }}
-      customLightSquareStyle={{ backgroundColor: '#eeeed2' }}
+      customDarkSquareStyle={{ backgroundColor: '#7a4f3a' }}
+      customLightSquareStyle={{ backgroundColor: '#d4c5a9' }}
     />
   );
 }

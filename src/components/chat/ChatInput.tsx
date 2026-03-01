@@ -45,7 +45,7 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
   return (
     <div
       className="flex items-center gap-2 px-3 py-3"
-      style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+      style={{ borderTop: '1px solid rgba(139,148,255,0.08)' }}
     >
       <input
         ref={inputRef}
@@ -57,12 +57,12 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
         disabled={isDisabled}
         className="flex-1 text-sm px-3 py-2 rounded-lg outline-none min-w-0 transition-all"
         style={{
-          backgroundColor: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.07)',
-          color: '#cdd5e0',
+          backgroundColor: 'rgba(139,148,255,0.05)',
+          border: '1px solid rgba(139,148,255,0.10)',
+          color: '#e2e8f0',
         }}
-        onFocus={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.3)'; }}
-        onBlur={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; }}
+        onFocus={e => { e.currentTarget.style.borderColor = 'rgba(129,140,248,0.35)'; }}
+        onBlur={e => { e.currentTarget.style.borderColor = 'rgba(139,148,255,0.10)'; }}
       />
       <VoiceButton
         isRecording={isRecording}
@@ -77,15 +77,15 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
         disabled={isDisabled || !text.trim()}
         className="flex-shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed"
         style={{
-          backgroundColor: 'rgba(212,168,67,0.1)',
-          border: '1px solid rgba(212,168,67,0.22)',
-          color: '#d4a843',
+          backgroundColor: 'rgba(129,140,248,0.12)',
+          border: '1px solid rgba(129,140,248,0.28)',
+          color: '#818cf8',
         }}
         onMouseEnter={e => {
-          if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = 'rgba(212,168,67,0.18)';
+          if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.22)';
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.backgroundColor = 'rgba(212,168,67,0.1)';
+          e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.12)';
         }}
       >
         Send
