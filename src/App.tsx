@@ -4,6 +4,7 @@ import { ChessBoard } from './components/board/ChessBoard';
 import { PlayerBar } from './components/board/PlayerBar';
 import { GameResultOverlay } from './components/board/GameResultOverlay';
 import { ControlPanel } from './components/menu/ControlPanel';
+import { DifficultyPopup } from './components/menu/DifficultyPopup';
 import { ChatPanel } from './components/chat/ChatPanel';
 import { useGame } from './hooks/useGame';
 import { useStockfish } from './hooks/useStockfish';
@@ -101,14 +102,10 @@ export default function App() {
     }
   }, [connected, acquireGameId]);
 
-  // Auto-start a game once Stockfish is ready
-  const hasAutoStarted = useRef(false);
-  useEffect(() => {
-    if (stockfishReady && !hasAutoStarted.current) {
-      hasAutoStarted.current = true;
-      handleNewGame();
-    }
-  }, [stockfishReady, handleNewGame]);
+  const handleReturnToIdle = useCallback(() => {
+    game.resetToIdle();
+    chat.setPlaying(false);
+  }, [game, chat]);
 
   // Board layout helpers
   const {
@@ -147,8 +144,25 @@ export default function App() {
             customSquareStyles={customSquareStyles()}
             isInteractive={gameStatus === 'playing'}
           />
+          {gameStatus === 'idle' && (
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 10,
+                background: 'rgba(19, 17, 16, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '2px',
+                pointerEvents: 'none',
+              }}
+            >
+              <span style={{ fontSize: 48, opacity: 0.35 }}>♟</span>
+            </div>
+          )}
           {gameStatus === 'ended' && gameResult && (
-            <GameResultOverlay result={gameResult} onNewGame={handleNewGame} />
+            <GameResultOverlay result={gameResult} onReturnToIdle={handleReturnToIdle} />
           )}
         </div>
         <PlayerBar name={bottomName} />
@@ -158,6 +172,7 @@ export default function App() {
         difficulty={difficulty}
         onDifficultyChange={setDifficulty}
         onNewGame={handleNewGame}
+        onReturnToIdle={handleReturnToIdle}
         soundEnabled={soundEnabled}
         onToggleSound={toggleSound}
         connected={connected}
@@ -168,17 +183,26 @@ export default function App() {
   );
 
   return (
-    <GameLayout
-      board={boardElement}
-      chat={
-        <ChatPanel
-          messages={chat.messages}
-          isWaiting={chat.isWaiting}
-          onSend={chat.sendMessage}
-          hasGame={chat.hasGameId()}
-          connected={connected}
-        />
-      }
-    />
+    <>
+      <GameLayout
+        board={boardElement}
+        chat={
+          <ChatPanel
+            messages={chat.messages}
+            isWaiting={chat.isWaiting}
+            onSend={chat.sendMessage}
+            hasGame={chat.hasGameId()}
+            connected={connected}
+          />
+        }
+      />
+      <DifficultyPopup
+        open={gameStatus === 'idle'}
+        difficulty={difficulty}
+        onDifficultyChange={setDifficulty}
+        onStart={handleNewGame}
+        stockfishReady={stockfishReady}
+      />
+    </>
   );
 }

@@ -267,6 +267,20 @@ export function useGame({
     setPendingPromotion(null);
   }, []);
 
+  const resetToIdle = useCallback(() => {
+    chessRef.current = new Chess();
+    uciMovesRef.current = [];
+    isAiThinkingRef.current = false;
+    setFen(new Chess().fen());
+    setGameStatus('idle');
+    setGameResult(null);
+    setLastMove(null);
+    setSelectedSquare(null);
+    setLegalMoves([]);
+    setCheckedKingSquare(null);
+    setPendingPromotion(null);
+  }, []);
+
   const startNewGame = useCallback(() => {
     const newHuman: PlayerColor = humanWasWhiteLastRef.current ? 'black' : 'white';
     humanWasWhiteLastRef.current = newHuman === 'white';
@@ -358,6 +372,7 @@ export function useGame({
     onRightClick,
     onPromotionSelect,
     pendingPromotion,
+    resetToIdle,
     startNewGame,
     handleTimeout,
     customSquareStyles,

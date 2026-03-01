@@ -6,6 +6,7 @@ interface ControlPanelProps {
   difficulty: DifficultyLevel;
   onDifficultyChange: (d: DifficultyLevel) => void;
   onNewGame: () => void;
+  onReturnToIdle: () => void;
   soundEnabled: boolean;
   onToggleSound: () => void;
   connected: boolean;
@@ -17,6 +18,7 @@ export function ControlPanel({
   difficulty,
   onDifficultyChange,
   onNewGame,
+  onReturnToIdle,
   soundEnabled,
   onToggleSound,
   connected,
@@ -99,38 +101,70 @@ export function ControlPanel({
       {/* Spacer */}
       <div style={{ flex: 1 }} />
 
-      {/* New Game */}
-      <button
-        onClick={onNewGame}
-        disabled={!stockfishReady}
-        style={{
-          fontSize: 12,
-          fontWeight: 500,
-          fontFamily: 'Outfit, sans-serif',
-          padding: '5px 14px',
-          border: '1px solid #232F3B',
-          backgroundColor: 'transparent',
-          color: '#232F3B',
-          cursor: stockfishReady ? 'pointer' : 'not-allowed',
-          opacity: stockfishReady ? 1 : 0.3,
-          transition: 'all 0.12s ease',
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
-          borderRadius: 2,
-        }}
-        onMouseEnter={e => {
-          if (!e.currentTarget.disabled) {
-            e.currentTarget.style.backgroundColor = '#232F3B';
-            e.currentTarget.style.color = '#FFFFFF';
-          }
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.backgroundColor = 'transparent';
-          e.currentTarget.style.color = '#232F3B';
-        }}
-      >
-        {isPlaying ? 'Resign & New' : 'New Game'}
-      </button>
+      {/* Resign / New Game */}
+      {isPlaying ? (
+        <button
+          onClick={onReturnToIdle}
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            fontFamily: 'Outfit, sans-serif',
+            padding: '5px 14px',
+            border: '1px solid #9AB5C8',
+            backgroundColor: 'transparent',
+            color: '#5A7A96',
+            cursor: 'pointer',
+            transition: 'all 0.12s ease',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            borderRadius: 2,
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.backgroundColor = '#EEF3F8';
+            e.currentTarget.style.borderColor = '#232F3B';
+            e.currentTarget.style.color = '#232F3B';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.borderColor = '#9AB5C8';
+            e.currentTarget.style.color = '#5A7A96';
+          }}
+        >
+          New Game
+        </button>
+      ) : (
+        <button
+          onClick={onNewGame}
+          disabled={!stockfishReady}
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            fontFamily: 'Outfit, sans-serif',
+            padding: '5px 14px',
+            border: '1px solid #232F3B',
+            backgroundColor: 'transparent',
+            color: '#232F3B',
+            cursor: stockfishReady ? 'pointer' : 'not-allowed',
+            opacity: stockfishReady ? 1 : 0.3,
+            transition: 'all 0.12s ease',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            borderRadius: 2,
+          }}
+          onMouseEnter={e => {
+            if (!e.currentTarget.disabled) {
+              e.currentTarget.style.backgroundColor = '#232F3B';
+              e.currentTarget.style.color = '#FFFFFF';
+            }
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = '#232F3B';
+          }}
+        >
+          New Game
+        </button>
+      )}
 
       {/* Sound toggle */}
       <button

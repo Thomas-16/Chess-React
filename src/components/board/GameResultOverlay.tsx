@@ -2,10 +2,10 @@ import type { GameResult } from '../../types/chess';
 
 interface GameResultOverlayProps {
   result: GameResult;
-  onNewGame: () => void;
+  onReturnToIdle: () => void;
 }
 
-export function GameResultOverlay({ result, onNewGame }: GameResultOverlayProps) {
+export function GameResultOverlay({ result, onReturnToIdle }: GameResultOverlayProps) {
   return (
     <div
       className="absolute inset-0 flex flex-col items-center justify-center z-10"
@@ -37,7 +37,7 @@ export function GameResultOverlay({ result, onNewGame }: GameResultOverlayProps)
           </div>
         )}
         <button
-          onClick={onNewGame}
+          onClick={onReturnToIdle}
           style={{
             fontSize: 13,
             fontWeight: 500,
@@ -61,7 +61,7 @@ export function GameResultOverlay({ result, onNewGame }: GameResultOverlayProps)
             e.currentTarget.style.color = '#232F3B';
           }}
         >
-          Play again
+          New Game
         </button>
       </div>
     </div>
