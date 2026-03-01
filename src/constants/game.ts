@@ -12,8 +12,8 @@ export interface DifficultyConfig {
 }
 
 export const DIFFICULTY_CONFIGS: Record<DifficultyLevel, DifficultyConfig> = {
-  Easy: { skill: 0, depth: 1, moveTime: 500, elo: 1320 },
-  Medium: { skill: 3, depth: 3, moveTime: 1000, elo: 1320 },
+  Easy: { skill: 0, depth: 2, moveTime: 500, elo: 1320 },
+  Medium: { skill: 3, depth: 4, moveTime: 1000, elo: 1320 },
   Hard: { skill: 10, depth: 8, moveTime: 1500, elo: 1600 },
   Expert: { skill: 18, depth: 16, moveTime: 2000, elo: 2000 },
 };
