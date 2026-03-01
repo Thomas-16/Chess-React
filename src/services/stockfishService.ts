@@ -54,6 +54,8 @@ class StockfishService {
       this.moveCallback = resolve;
 
       this.worker.postMessage('ucinewgame');
+      this.worker.postMessage(`setoption name UCI_LimitStrength value true`);
+      this.worker.postMessage(`setoption name UCI_Elo value ${config.elo}`);
       this.worker.postMessage(`setoption name Skill Level value ${config.skill}`);
 
       const movesStr = moves.length > 0 ? ` moves ${moves.join(' ')}` : '';
