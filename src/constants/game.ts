@@ -11,10 +11,10 @@ export interface DifficultyConfig {
 }
 
 export const DIFFICULTY_CONFIGS: Record<DifficultyLevel, DifficultyConfig> = {
-  Easy: { skill: 0, depth: 3, moveTime: 500 },
-  Medium: { skill: 4, depth: 5, moveTime: 1000 },
-  Hard: { skill: 13, depth: 10, moveTime: 1500 },
-  Expert: { skill: 18, depth: 20, moveTime: 2000 },
+  Easy: { skill: 0, depth: 2, moveTime: 500 },
+  Medium: { skill: 3, depth: 4, moveTime: 1000 },
+  Hard: { skill: 10, depth: 8, moveTime: 1500 },
+  Expert: { skill: 18, depth: 16, moveTime: 2000 },
 };
 
 // Timer constants
