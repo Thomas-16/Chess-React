@@ -114,8 +114,8 @@ export default function App() {
     onPromotionSelect, pendingPromotion, customSquareStyles,
   } = game;
   const aiLabel = `AI (${difficulty})`;
-  const topName = humanColor === 'white' ? aiLabel : 'You';
-  const bottomName = humanColor === 'white' ? 'You' : aiLabel;
+  const topName = aiLabel;
+  const bottomName = 'You';
 
   const boardElement = (
     <div style={{ width: 680 }}>
