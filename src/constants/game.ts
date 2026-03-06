@@ -10,13 +10,15 @@ export interface DifficultyConfig {
   moveTime: number; // ms
   elo: number;
   useLimitStrength: boolean;
+  multiPV: number;       // number of candidate moves to request from Stockfish
+  blunderChance: number; // 0.0–1.0, probability of picking a non-best move
 }
 
 export const DIFFICULTY_CONFIGS: Record<DifficultyLevel, DifficultyConfig> = {
-  Easy:   { skill: 0,  depth: 1,  moveTime: 200,  elo: 1320, useLimitStrength: false },
-  Medium: { skill: 3,  depth: 3,  moveTime: 500,  elo: 1320, useLimitStrength: false },
-  Hard:   { skill: 10, depth: 8,  moveTime: 1500, elo: 1600, useLimitStrength: true  },
-  Expert: { skill: 20, depth: 16, moveTime: 2000, elo: 2000, useLimitStrength: true  },
+  Easy:   { skill: 0,  depth: 4,  moveTime: 300,  elo: 1320, useLimitStrength: false, multiPV: 6, blunderChance: 0.70 },
+  Medium: { skill: 3,  depth: 6,  moveTime: 500,  elo: 1320, useLimitStrength: false, multiPV: 4, blunderChance: 0.30 },
+  Hard:   { skill: 10, depth: 8,  moveTime: 1500, elo: 1600, useLimitStrength: true,  multiPV: 1, blunderChance: 0.0  },
+  Expert: { skill: 20, depth: 16, moveTime: 2000, elo: 2000, useLimitStrength: true,  multiPV: 1, blunderChance: 0.0  },
 };
 
 // Timer constants
