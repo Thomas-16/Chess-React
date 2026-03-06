@@ -8,10 +8,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev       # Dev server at localhost:5173
 npm run build     # tsc -b + vite build (TypeScript check first)
 npm run lint      # ESLint check
+npm test          # Run tests with Vitest (watch mode)
+npm run test:run  # Run tests once (CI mode)
 npm run preview   # Preview production build
 ```
 
-No test runner is configured.
+## Testing
+
+After any large change (new features, refactors, bug fixes affecting multiple files), run the test suite:
+
+```bash
+npm run test:run
+```
+
+Fix any test failures before committing. Tests live alongside source code in `__tests__/` directories using Vitest + React Testing Library. If you change behavior in a hook, service, or component, update or add corresponding tests.
 
 ## Architecture
 
