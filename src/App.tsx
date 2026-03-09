@@ -118,7 +118,7 @@ export default function App() {
   const bottomName = 'You';
 
   const boardElement = (
-    <div style={{ width: 680 }}>
+    <div style={{ width: 'min(680px, calc(100dvh - 209px))' }}>
       {/* Board card */}
       <div
         style={{

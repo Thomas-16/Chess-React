@@ -9,7 +9,7 @@ export function GameLayout({ board, chat }: GameLayoutProps) {
   return (
     <div
       className="flex justify-center"
-      style={{ background: '#E4ECF5', padding: '36px 32px', alignItems: 'flex-start', minHeight: '100dvh', overflow: 'hidden' }}
+      style={{ background: '#E4ECF5', padding: '36px 32px', alignItems: 'flex-start', height: '100dvh', overflow: 'hidden', boxSizing: 'border-box' }}
     >
       <div style={{ display: 'flex', gap: 20, alignItems: 'stretch' }}>
         <div style={{ flexShrink: 0 }}>
