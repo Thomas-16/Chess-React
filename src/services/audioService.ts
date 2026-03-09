@@ -1,23 +1,24 @@
 class AudioService {
   private moveSound: HTMLAudioElement | null = null;
   private captureSound: HTMLAudioElement | null = null;
+  private ttsAudio: HTMLAudioElement | null = null;
   private enabled = true;
-  private audioContext: AudioContext | null = null;
 
   init() {
     this.moveSound = new Audio('/sounds/move.wav');
     this.captureSound = new Audio('/sounds/capture.wav');
+    this.ttsAudio = new Audio();
     this.moveSound.load();
     this.captureSound.load();
   }
 
-  /** Create or resume the AudioContext. Must be called during a user gesture on iOS/iPadOS. */
+  /** Unlock TTS audio element on iOS/iPadOS. Must be called during a user gesture. */
   unlock() {
-    if (!this.audioContext) {
-      this.audioContext = new AudioContext();
-    }
-    if (this.audioContext.state === 'suspended') {
-      this.audioContext.resume().catch(() => {});
+    // Playing on an HTMLAudioElement during a user gesture "unlocks" it on iOS,
+    // allowing subsequent play() calls from non-gesture contexts (e.g. SignalR callbacks).
+    if (this.ttsAudio) {
+      this.ttsAudio.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+      this.ttsAudio.play().catch(() => {});
     }
   }
 
@@ -38,40 +39,18 @@ class AudioService {
   }
 
   playBase64Audio(base64: string) {
+    if (!this.ttsAudio) return;
     try {
-      if (!this.audioContext) {
-        this.audioContext = new AudioContext();
-      }
-
-      // Resume if suspended (iOS re-suspends between user gestures)
-      if (this.audioContext.state === 'suspended') {
-        this.audioContext.resume().catch(() => {});
-      }
-
       const binary = atob(base64);
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i++) {
         bytes[i] = binary.charCodeAt(i);
       }
-
-      const arrayBuffer = bytes.buffer.slice(
-        bytes.byteOffset,
-        bytes.byteOffset + bytes.byteLength
-      );
-
-      this.audioContext.decodeAudioData(
-        arrayBuffer,
-        (audioBuffer) => {
-          if (!this.audioContext) return;
-          const source = this.audioContext.createBufferSource();
-          source.buffer = audioBuffer;
-          source.connect(this.audioContext.destination);
-          source.start(0);
-        },
-        () => {
-          // Decode error — ignore
-        }
-      );
+      const blob = new Blob([bytes], { type: 'audio/mpeg' });
+      const url = URL.createObjectURL(blob);
+      this.ttsAudio.onended = () => URL.revokeObjectURL(url);
+      this.ttsAudio.src = url;
+      this.ttsAudio.play().catch(() => {});
     } catch {
       // Ignore audio errors
     }
