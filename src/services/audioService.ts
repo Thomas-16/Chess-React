@@ -43,6 +43,11 @@ class AudioService {
         this.audioContext = new AudioContext();
       }
 
+      // Resume if suspended (iOS re-suspends between user gestures)
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume().catch(() => {});
+      }
+
       const binary = atob(base64);
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i++) {
