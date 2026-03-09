@@ -8,8 +8,8 @@ interface GameLayoutProps {
 export function GameLayout({ board, chat }: GameLayoutProps) {
   return (
     <div
-      className="min-h-screen flex justify-center"
-      style={{ background: '#E4ECF5', padding: '36px 32px', alignItems: 'flex-start' }}
+      className="flex justify-center"
+      style={{ background: '#E4ECF5', padding: '36px 32px', alignItems: 'flex-start', minHeight: '100dvh', overflow: 'hidden' }}
     >
       <div style={{ display: 'flex', gap: 20, alignItems: 'stretch' }}>
         <div style={{ flexShrink: 0 }}>
