@@ -11,11 +11,11 @@ export function GameLayout({ board, chat }: GameLayoutProps) {
       className="flex justify-center"
       style={{ background: '#E4ECF5', padding: '36px 32px', alignItems: 'flex-start', height: '100dvh', overflow: 'hidden', boxSizing: 'border-box' }}
     >
-      <div style={{ display: 'flex', gap: 20, alignItems: 'stretch' }}>
+      <div style={{ display: 'flex', gap: 20, alignItems: 'stretch', maxHeight: '100%' }}>
         <div style={{ flexShrink: 0 }}>
           {board}
         </div>
-        <div style={{ width: 400, flexShrink: 0 }}>
+        <div style={{ width: 400, flexShrink: 0, overflow: 'hidden' }}>
           {chat}
         </div>
       </div>

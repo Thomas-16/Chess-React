@@ -8,14 +8,17 @@ interface ChatMessagesProps {
 }
 
 export function ChatMessages({ messages, isWaiting }: ChatMessagesProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isWaiting]);
+    const el = containerRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messages.length, isWaiting]);
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ padding: '16px 20px', paddingRight: 16 }}>
+    <div ref={containerRef} className="flex-1 overflow-y-auto" style={{ padding: '16px 20px', paddingRight: 16 }}>
       {messages.length === 0 && (
         <p
           style={{
@@ -39,7 +42,6 @@ export function ChatMessages({ messages, isWaiting }: ChatMessagesProps) {
           </span>
         </div>
       )}
-      <div ref={bottomRef} />
     </div>
   );
 }

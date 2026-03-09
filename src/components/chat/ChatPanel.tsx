@@ -18,6 +18,7 @@ export function ChatPanel({ messages, isWaiting, onSend, hasGame, connected }: C
         background: '#232F3B',
         border: '1px solid #1C2730',
         boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
+        overflow: 'hidden',
       }}
     >
       {/* Header */}
