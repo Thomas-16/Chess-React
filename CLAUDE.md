@@ -85,7 +85,7 @@ Hub: `/chesshub`
 - Theme: charcoal bg `#131110`, cream `#F0E8D8`, amber accent `#C8922A`
 
 ### Environment Variables
-- `VITE_BACKEND_URL` — SignalR hub base URL (defaults to `http://localhost:5000`)
+- `VITE_BACKEND_URL` — SignalR hub base URL (defaults to `http://localhost:5000`. Real backend is hosted on Render)
 - `VITE_GROQ_API_KEY` — Optional, enables voice input via Groq Whisper transcription
 
 ### TypeScript Notes
