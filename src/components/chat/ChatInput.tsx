@@ -34,9 +34,8 @@ export function ChatInput({ onSend, disabled, hasGame }: ChatInputProps) {
 
   const handleVoiceStop = async () => {
     const transcribed = await stopRecording();
-    if (transcribed) {
-      setText(transcribed);
-      inputRef.current?.focus();
+    if (transcribed && !disabled) {
+      onSend(transcribed);
     }
   };
 
