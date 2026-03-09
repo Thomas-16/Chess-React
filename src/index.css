@@ -4,8 +4,13 @@
   box-sizing: border-box;
 }
 
-body {
+html, body, #root {
   margin: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body {
   font-family: 'Outfit', sans-serif;
   background-color: #E4ECF5;
   color: #0A0A0A;
